@@ -1,25 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Rig Studio | Unity Tools for Developers</title>
-  <link rel="stylesheet" href="style.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-image: url('assets/bg.jpg');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      min-height: 100vh;
+      color: #fff;
+    }
+
+    .overlay {
+      background: rgba(0, 0, 0, 0.7);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 4rem 2rem;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 3.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    p.subtitle {
+      font-size: 1.3rem;
+      color: #ccc;
+      margin-bottom: 2rem;
+      max-width: 700px;
+    }
+
+    .cta {
+      display: inline-block;
+      padding: 1rem 2rem;
+      background-color: #38bdf8;
+      color: #000;
+      font-weight: bold;
+      border-radius: 12px;
+      text-decoration: none;
+      transition: background 0.3s ease;
+    }
+
+    .cta:hover {
+      background-color: #0ea5e9;
+    }
+
+    section {
+      background-color: #121212;
+      padding: 4rem 2rem;
+      text-align: center;
+    }
+
+    section h2 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    section p {
+      font-size: 1.1rem;
+      color: #aaa;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .footer {
+      background-color: #0d0d0d;
+      padding: 2rem;
+      text-align: center;
+      color: #666;
+      font-size: 0.9rem;
+    }
+  </style>
 </head>
 <body>
   <div class="overlay">
-    <div class="content">
-      <h1>Rig Studio</h1>
-      <p>Professional Unity tools crafted by real developers.</p>
-      <a class="cta" href="#tools">Explore Tools</a>
-    </div>
+    <h1>Rig Studio</h1>
+    <p class="subtitle">Professional Unity tools crafted by game developers—for game developers. From scene tooling to asset pipeline helpers, we ship what we use in our own RPG production.</p>
+    <a class="cta" href="#tools">Explore Our Tools</a>
   </div>
 
-  <section id="tools" class="section">
+  <section id="tools">
     <h2>Our Tools</h2>
-    <p>Built from real-world RPG development needs. From prefab painters to addressable optimizers—our assets are focused, efficient, and ready for production.</p>
+    <p>Our assets are built with performance, clarity, and extensibility in mind—because we use them ourselves. Whether you're managing complex environments or automating editor workflows, Rig Studio tools help you build smarter and faster in Unity.</p>
   </section>
+
+  <div class="footer">
+    &copy; 2025 Rig Studio | Built by developers, for developers
+  </div>
 </body>
 </html>
+
