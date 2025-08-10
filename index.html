@@ -247,6 +247,7 @@
             position: relative;
             overflow: hidden;
             border: 2px solid transparent;
+            cursor: pointer;
         }
 
         .cta-button.secondary {
@@ -278,6 +279,12 @@
         .cta-button.secondary:hover {
             background: var(--blue-gradient);
             color: var(--text-light);
+        }
+
+        .cta-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
         }
 
         /* Sections */
@@ -603,6 +610,35 @@
         .form-group textarea {
             resize: vertical;
             min-height: 140px;
+        }
+
+        /* Status messages */
+        .status-message {
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            text-align: center;
+            font-weight: 600;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+
+        .status-message.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .status-message.error {
+            background: rgba(255, 68, 68, 0.2);
+            border: 1px solid #ff4444;
+            color: #ff6666;
+        }
+
+        .status-message.success {
+            background: rgba(0, 255, 136, 0.2);
+            border: 1px solid #00ff88;
+            color: #00ff88;
         }
 
         /* Footer */
@@ -956,6 +992,7 @@
                 </div>
             </div>
             <form class="contact-form" id="contactForm">
+                <div id="statusMessage" class="status-message"></div>
                 <div class="form-group">
                     <label for="name">Full Name</label>
                     <input type="text" id="name" name="name" required>
@@ -972,7 +1009,7 @@
                     <label for="message">Message</label>
                     <textarea id="message" name="message" required placeholder="Tell us about your project or inquiry..."></textarea>
                 </div>
-                <button type="submit" class="cta-button">Send Message</button>
+                <button type="submit" class="cta-button" id="submitBtn">Send Message</button>
             </form>
         </div>
     </section>
@@ -1007,16 +1044,22 @@
     </footer>
 
     <script>
-        // EmailJS Configuration - REPLACE WITH YOUR ACTUAL IDs
+        // EmailJS Configuration - UPDATE THESE WITH YOUR ACTUAL VALUES
         const EMAILJS_CONFIG = {
-            serviceID: 'service_xtzel29',           // ✅ Your service ID
-            notificationTemplateID: 'template_37s310m',  // Replace with notification template ID
-            autoReplyTemplateID: 'template_ej7jsck',       // Replace with auto-reply template ID
-            publicKey: 'VAPY-EoCBOMgGHFQW'            // Replace with your EmailJS public key
+            publicKey: 'VAPY-EoCBOMgGHFQW',     // Replace with your actual public key
+            serviceID: 'service_xtzel29',             // Replace with your service ID
+            templateID: 'template_37s310m'            // Replace with your template ID
         };
 
-        // Initialize EmailJS
-        emailjs.init(EMAILJS_CONFIG.publicKey);
+        // Initialize EmailJS when the script loads
+        (function() {
+            try {
+                emailjs.init(EMAILJS_CONFIG.publicKey);
+                console.log('EmailJS initialized successfully');
+            } catch (error) {
+                console.error('Failed to initialize EmailJS:', error);
+            }
+        })();
 
         // Remove loading screen after page loads
         window.addEventListener('load', () => {
@@ -1047,7 +1090,7 @@
             }
         }
 
-        // Mobile menu functionality - FIXED
+        // Mobile menu functionality
         function initMobileMenu() {
             const mobileToggle = document.querySelector('.mobile-toggle');
             const navLinks = document.querySelector('.nav-links');
@@ -1081,6 +1124,133 @@
             });
         }
 
+        // Show status message
+        function showStatusMessage(message, type = 'success') {
+            const statusElement = document.getElementById('statusMessage');
+            statusElement.textContent = message;
+            statusElement.className = `status-message ${type} show`;
+            
+            // Hide after 5 seconds
+            setTimeout(() => {
+                statusElement.classList.remove('show');
+            }, 5000);
+        }
+
+        // Validate email format
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        // Enhanced form submission with proper error handling
+        document.getElementById('contactForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Get form elements
+            const button = document.getElementById('submitBtn');
+            const form = this;
+            const originalButtonText = button.textContent;
+            
+            // Validate form data
+            const formData = new FormData(form);
+            const name = formData.get('name').trim();
+            const email = formData.get('email').trim();
+            const subject = formData.get('subject').trim();
+            const message = formData.get('message').trim();
+            
+            // Basic validation
+            if (!name || !email || !subject || !message) {
+                showStatusMessage('Please fill in all fields.', 'error');
+                return;
+            }
+            
+            if (!isValidEmail(email)) {
+                showStatusMessage('Please enter a valid email address.', 'error');
+                return;
+            }
+            
+            if (message.length < 10) {
+                showStatusMessage('Please provide a more detailed message (at least 10 characters).', 'error');
+                return;
+            }
+            
+            // Check if EmailJS is properly configured
+            if (EMAILJS_CONFIG.publicKey === 'VAPY-EoCBOMgGHFQW' || 
+                EMAILJS_CONFIG.serviceID === 'service_xtzel29' || 
+                EMAILJS_CONFIG.templateID === 'template_37s310m') {
+                showStatusMessage('Email service is not configured. Please contact us directly at rigstudioph@gmail.com', 'error');
+                return;
+            }
+            
+            // Prepare template parameters
+            const templateParams = {
+                from_name: name,
+                from_email: email,
+                subject: subject,
+                message: message,
+                to_name: 'Rig Studio Team',
+                reply_to: email
+            };
+            
+            // Show loading state
+            button.textContent = 'Sending...';
+            button.disabled = true;
+            button.style.opacity = '0.7';
+            
+            try {
+                // Send email using EmailJS
+                const response = await emailjs.send(
+                    EMAILJS_CONFIG.serviceID,
+                    EMAILJS_CONFIG.templateID,
+                    templateParams
+                );
+                
+                console.log('Email sent successfully:', response);
+                
+                // Show success message
+                showStatusMessage('Thank you! Your message has been sent successfully. We\'ll get back to you soon!', 'success');
+                
+                // Reset form
+                form.reset();
+                
+                // Success button state
+                button.textContent = 'Message Sent!';
+                button.style.background = 'linear-gradient(135deg, #00ff88 0%, #00cc66 100%)';
+                button.style.boxShadow = '0 0 20px rgba(0, 255, 136, 0.4)';
+                
+            } catch (error) {
+                console.error('Failed to send email:', error);
+                
+                // Show detailed error message
+                let errorMessage = 'Failed to send message. ';
+                if (error.status === 422) {
+                    errorMessage += 'Please check your email address and try again.';
+                } else if (error.status === 400) {
+                    errorMessage += 'Invalid request. Please refresh and try again.';
+                } else if (error.status === 403) {
+                    errorMessage += 'Service temporarily unavailable.';
+                } else {
+                    errorMessage += 'Please try again or contact us directly at rigstudioph@gmail.com';
+                }
+                
+                showStatusMessage(errorMessage, 'error');
+                
+                // Error button state
+                button.textContent = 'Failed to Send';
+                button.style.background = 'linear-gradient(135deg, #ff4444 0%, #cc0000 100%)';
+                button.style.boxShadow = '0 0 20px rgba(255, 68, 68, 0.4)';
+            }
+            
+            // Reset button after 3 seconds
+            setTimeout(() => {
+                button.textContent = originalButtonText;
+                button.style.background = '';
+                button.style.boxShadow = '';
+                button.style.opacity = '';
+                button.disabled = false;
+            }, 3000);
+        });
+
         // Smooth scrolling for navigation links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
@@ -1093,85 +1263,6 @@
                     });
                 }
             });
-        });
-
-        // Enhanced form submission with dual email functionality
-        document.getElementById('contactForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            // Get form elements
-            const button = this.querySelector('.cta-button');
-            const originalText = button.textContent;
-            
-            // Get form data
-            const formData = new FormData(this);
-            const templateParams = {
-                from_name: formData.get('name'),
-                from_email: formData.get('email'),
-                subject: formData.get('subject'),
-                message: formData.get('message'),
-                to_name: 'Rig Studio Team',
-                reply_to: formData.get('email')
-            };
-            
-            // Show loading state
-            button.textContent = 'Sending...';
-            button.style.opacity = '0.7';
-            button.disabled = true;
-            
-            try {
-                // Send notification email to Rig Studio (you)
-                const notificationResponse = await emailjs.send(
-                    EMAILJS_CONFIG.serviceID,
-                    EMAILJS_CONFIG.notificationTemplateID,
-                    templateParams
-                );
-                
-                // Send auto-reply to the user
-                const autoReplyResponse = await emailjs.send(
-                    EMAILJS_CONFIG.serviceID,
-                    EMAILJS_CONFIG.autoReplyTemplateID,
-                    templateParams
-                );
-                
-                console.log('Notification email sent:', notificationResponse);
-                console.log('Auto-reply sent:', autoReplyResponse);
-                
-                // Show success state
-                button.textContent = 'Message Sent!';
-                button.style.background = 'linear-gradient(135deg, #00ff88 0%, #00cc66 100%)';
-                button.style.boxShadow = '0 0 20px rgba(0, 255, 136, 0.4)';
-                
-                // Reset form after success
-                setTimeout(() => {
-                    button.textContent = originalText;
-                    button.style.background = '';
-                    button.style.boxShadow = '';
-                    button.style.opacity = '';
-                    button.disabled = false;
-                    this.reset();
-                }, 3000);
-                
-            } catch (error) {
-                console.error('Email sending failed:', error);
-                
-                // Show error state
-                button.textContent = 'Failed to Send';
-                button.style.background = 'linear-gradient(135deg, #ff4444 0%, #cc0000 100%)';
-                button.style.boxShadow = '0 0 20px rgba(255, 68, 68, 0.4)';
-                
-                // Reset button after error
-                setTimeout(() => {
-                    button.textContent = originalText;
-                    button.style.background = '';
-                    button.style.boxShadow = '';
-                    button.style.opacity = '';
-                    button.disabled = false;
-                }, 3000);
-                
-                // Show user-friendly error message
-                alert('Sorry, there was an error sending your message. Please try again or contact us directly at rigstudioph@gmail.com');
-            }
         });
 
         // Enhanced header behavior on scroll
@@ -1236,14 +1327,12 @@
         document.querySelectorAll('a[href^="mailto:"]').forEach(link => {
             link.addEventListener('click', (e) => {
                 console.log('Email link clicked:', e.target.href);
-                // In production, you might want to track this with analytics
             });
         });
 
         // Performance optimization: Throttle scroll events
         let ticking = false;
         function updateOnScroll() {
-            // Additional scroll-based animations can be added here
             ticking = false;
         }
 
@@ -1263,8 +1352,6 @@
         function preloadImages() {
             const imageUrls = [
                 // Add your image URLs here when you have them
-                // 'path/to/game-screenshot.jpg',
-                // 'path/to/tool-preview.png'
             ];
             
             imageUrls.forEach(url => {
@@ -1273,7 +1360,6 @@
             });
         }
 
-        // Call preload on load
         preloadImages();
     </script>
 </body>
