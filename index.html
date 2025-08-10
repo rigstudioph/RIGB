@@ -1009,10 +1009,11 @@
     <script>
         // EmailJS Configuration - REPLACE WITH YOUR ACTUAL IDs
         const EMAILJS_CONFIG = {
-    serviceID: 'service_xtzel29',           // ✅ You have this
-    templateID: 'template_37s310m',         // 📝 Replace with your template ID
-    publicKey: 'VAPY-EoCBOMgGHFQW'       // 📝 Replace with your public key
-        };  
+            serviceID: 'service_xtzel29',           // ✅ Your service ID
+            notificationTemplateID: 'template_37s310m',  // Replace with notification template ID
+            autoReplyTemplateID: 'template_ej7jsck',       // Replace with auto-reply template ID
+            publicKey: 'VAPY-EoCBOMgGHFQW'            // Replace with your EmailJS public key
+        };
 
         // Initialize EmailJS
         emailjs.init(EMAILJS_CONFIG.publicKey);
@@ -1094,7 +1095,7 @@
             });
         });
 
-        // Enhanced form submission with real email functionality
+        // Enhanced form submission with dual email functionality
         document.getElementById('contactForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
@@ -1109,7 +1110,7 @@
                 from_email: formData.get('email'),
                 subject: formData.get('subject'),
                 message: formData.get('message'),
-                to_name: 'Rig Studio', // You can customize this
+                to_name: 'Rig Studio Team',
                 reply_to: formData.get('email')
             };
             
@@ -1119,21 +1120,29 @@
             button.disabled = true;
             
             try {
-                // Send email via EmailJS
-                const response = await emailjs.send(
+                // Send notification email to Rig Studio (you)
+                const notificationResponse = await emailjs.send(
                     EMAILJS_CONFIG.serviceID,
-                    EMAILJS_CONFIG.templateID,
+                    EMAILJS_CONFIG.notificationTemplateID,
                     templateParams
                 );
                 
-                console.log('Email sent successfully:', response);
+                // Send auto-reply to the user
+                const autoReplyResponse = await emailjs.send(
+                    EMAILJS_CONFIG.serviceID,
+                    EMAILJS_CONFIG.autoReplyTemplateID,
+                    templateParams
+                );
+                
+                console.log('Notification email sent:', notificationResponse);
+                console.log('Auto-reply sent:', autoReplyResponse);
                 
                 // Show success state
                 button.textContent = 'Message Sent!';
                 button.style.background = 'linear-gradient(135deg, #00ff88 0%, #00cc66 100%)';
                 button.style.boxShadow = '0 0 20px rgba(0, 255, 136, 0.4)';
                 
-                // Reset form
+                // Reset form after success
                 setTimeout(() => {
                     button.textContent = originalText;
                     button.style.background = '';
@@ -1151,7 +1160,7 @@
                 button.style.background = 'linear-gradient(135deg, #ff4444 0%, #cc0000 100%)';
                 button.style.boxShadow = '0 0 20px rgba(255, 68, 68, 0.4)';
                 
-                // Reset button after delay
+                // Reset button after error
                 setTimeout(() => {
                     button.textContent = originalText;
                     button.style.background = '';
@@ -1160,8 +1169,8 @@
                     button.disabled = false;
                 }, 3000);
                 
-                // You might want to show a user-friendly error message
-                alert('Sorry, there was an error sending your message. Please try again or contact us directly via email.');
+                // Show user-friendly error message
+                alert('Sorry, there was an error sending your message. Please try again or contact us directly at rigstudioph@gmail.com');
             }
         });
 
