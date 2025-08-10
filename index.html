@@ -1044,7 +1044,7 @@
         initMobileMenu();
 
         // Add CSS for mobile menu animation
-        const mobileMenuStyles = 
+        const mobileMenuStyles = `
             @media (max-width: 768px) {
                 .mobile-toggle {
                     display: block !important;
@@ -1079,7 +1079,7 @@
                     padding: 1rem;
                 }
             }
-        ;
+        `;
         
         const styleSheet = document.createElement('style');
         styleSheet.textContent = mobileMenuStyles;
@@ -1106,7 +1106,7 @@
         function addCustomCursor() {
             const cursor = document.createElement('div');
             cursor.className = 'custom-cursor';
-            cursor.style.cssText = 
+            cursor.style.cssText = `
                 position: fixed;
                 width: 20px;
                 height: 20px;
@@ -1117,7 +1117,7 @@
                 opacity: 0;
                 transition: opacity 0.2s ease;
                 mix-blend-mode: difference;
-            ;
+            `;
             
             document.body.appendChild(cursor);
             
