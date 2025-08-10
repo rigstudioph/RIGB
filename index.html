@@ -1045,11 +1045,12 @@
     </footer>
 
     <script>
-        // EmailJS Configuration - Using your actual values
+        // EmailJS Configuration - Updated with both templates
         const EMAILJS_CONFIG = {
             publicKey: 'VAPY-EoCBOMgGHFQW',
             serviceID: 'service_xtzel29',
-            templateID: 'template_37s310m'
+            templateID: 'template_37s310m',      // Main template for receiving messages
+            autoReplyTemplateID: 'template_ej7jsck'  // Auto-reply template
         };
 
         // Initialize EmailJS
@@ -1143,7 +1144,7 @@
             return emailRegex.test(email);
         }
 
-        // Form submission with EmailJS
+        // Enhanced form submission with auto-reply support
         document.getElementById('contactForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             console.log('Form submission started');
@@ -1155,30 +1156,44 @@
 
             // Get form data with correct field names
             const formData = new FormData(form);
-            const templateParams = {
-                from_name: formData.get('from_name')?.trim() || '',
-                from_email: formData.get('from_email')?.trim() || '',
-                subject: formData.get('subject')?.trim() || '',
-                title: formData.get('subject')?.trim() || '', // Adding title for {{title}} template variable
-                message: formData.get('message')?.trim() || '',
+            const name = formData.get('from_name')?.trim() || '';
+            const email = formData.get('from_email')?.trim() || '';
+            const subject = formData.get('subject')?.trim() || '';
+            const message = formData.get('message')?.trim() || '';
+
+            // Template parameters for main message (to Rig Studio)
+            const mainTemplateParams = {
+                from_name: name,
+                from_email: email,
+                subject: subject,
+                title: subject, // Adding title for template compatibility
+                message: message,
                 to_name: 'Rig Studio Team',
-                reply_to: formData.get('from_email')?.trim() || ''
+                reply_to: email
+            };
+
+            // Template parameters for auto-reply (to user)
+            const autoReplyParams = {
+                from_name: name,  // {{from_name}} - user's name for personalized greeting
+                title: subject,   // {{title}} - subject/title of their inquiry
+                to_email: email,  // Send auto-reply to user's email
+                to_name: name     // User's name as recipient
             };
 
             // Basic validation
-            if (!templateParams.from_name || !templateParams.from_email || !templateParams.subject || !templateParams.message) {
+            if (!name || !email || !subject || !message) {
                 showStatusMessage('Please fill in all fields.', 'error');
                 console.log('Validation failed: Empty fields detected');
                 return;
             }
 
-            if (!isValidEmail(templateParams.from_email)) {
+            if (!isValidEmail(email)) {
                 showStatusMessage('Please enter a valid email address.', 'error');
                 console.log('Validation failed: Invalid email format');
                 return;
             }
 
-            if (templateParams.message.length < 10) {
+            if (message.length < 10) {
                 showStatusMessage('Please provide a more detailed message (at least 10 characters).', 'error');
                 console.log('Validation failed: Message too short');
                 return;
@@ -1192,19 +1207,35 @@
             button.style.opacity = '0.7';
 
             try {
-                console.log('Attempting to send email via EmailJS...');
+                console.log('Sending main email to Rig Studio...');
 
-                // Send email using EmailJS
-                const response = await emailjs.send(
+                // Send main email to Rig Studio
+                const mainResponse = await emailjs.send(
                     EMAILJS_CONFIG.serviceID,
                     EMAILJS_CONFIG.templateID,
-                    templateParams
+                    mainTemplateParams
                 );
 
-                console.log('Email sent successfully!', response);
+                console.log('Main email sent successfully!', mainResponse);
+
+                // Send auto-reply to user
+                console.log('Sending auto-reply to user...');
+                
+                try {
+                    const autoReplyResponse = await emailjs.send(
+                        EMAILJS_CONFIG.serviceID,
+                        EMAILJS_CONFIG.autoReplyTemplateID,
+                        autoReplyParams
+                    );
+
+                    console.log('Auto-reply sent successfully!', autoReplyResponse);
+                } catch (autoReplyError) {
+                    console.warn('Auto-reply failed (but main email was sent):', autoReplyError);
+                    // Continue - main email was successful
+                }
 
                 // Show success message
-                showStatusMessage('Thank you! Your message has been sent successfully. We\'ll get back to you soon!', 'success');
+                showStatusMessage('Thank you! Your message has been sent successfully. You should receive a confirmation email shortly. We\'ll get back to you soon!', 'success');
 
                 // Reset form
                 form.reset();
@@ -1356,7 +1387,7 @@
 
         preloadImages();
 
-        console.log('Rig Studio website loaded successfully');
+        console.log('Rig Studio website loaded successfully with auto-reply support');
     </script>
 </body>
 </html>
