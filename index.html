@@ -1174,10 +1174,11 @@
 
             // Template parameters for auto-reply (to user)
             const autoReplyParams = {
-                from_name: name,  // {{from_name}} - user's name for personalized greeting
-                title: subject,   // {{title}} - subject/title of their inquiry
-                to_email: email,  // Send auto-reply to user's email
-                to_name: name     // User's name as recipient
+                from_name: name,    // {{from_name}} - user's name for personalized greeting
+                from_email: email,  // {{from_email}} - user's email address
+                title: subject,     // {{title}} - subject/title of their inquiry
+                to_email: email,    // Send auto-reply to user's email
+                to_name: name       // User's name as recipient
             };
 
             // Basic validation
