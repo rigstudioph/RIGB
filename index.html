@@ -1159,6 +1159,7 @@
                 from_name: formData.get('from_name')?.trim() || '',
                 from_email: formData.get('from_email')?.trim() || '',
                 subject: formData.get('subject')?.trim() || '',
+                title: formData.get('subject')?.trim() || '', // Adding title for {{title}} template variable
                 message: formData.get('message')?.trim() || '',
                 to_name: 'Rig Studio Team',
                 reply_to: formData.get('from_email')?.trim() || ''
