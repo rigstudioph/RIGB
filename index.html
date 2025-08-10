@@ -14,6 +14,9 @@
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap" as="style">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
+    <!-- EmailJS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    
     <style>
         * {
             margin: 0;
@@ -1004,6 +1007,16 @@
     </footer>
 
     <script>
+        // EmailJS Configuration - REPLACE WITH YOUR ACTUAL IDs
+        const EMAILJS_CONFIG = {
+    serviceID: 'service_xtzel29',           // ✅ You have this
+    templateID: 'template_37s310m',         // 📝 Replace with your template ID
+    publicKey: 'VAPY-EoCBOMgGHFQW'       // 📝 Replace with your public key
+        };  
+
+        // Initialize EmailJS
+        emailjs.init(EMAILJS_CONFIG.publicKey);
+
         // Remove loading screen after page loads
         window.addEventListener('load', () => {
             const loadingScreen = document.getElementById('loadingScreen');
@@ -1081,26 +1094,46 @@
             });
         });
 
-        // Form submission with enhanced feedback
-        document.getElementById('contactForm').addEventListener('submit', function(e) {
+        // Enhanced form submission with real email functionality
+        document.getElementById('contactForm').addEventListener('submit', async function(e) {
             e.preventDefault();
+            
+            // Get form elements
+            const button = this.querySelector('.cta-button');
+            const originalText = button.textContent;
             
             // Get form data
             const formData = new FormData(this);
-            const data = Object.fromEntries(formData);
+            const templateParams = {
+                from_name: formData.get('name'),
+                from_email: formData.get('email'),
+                subject: formData.get('subject'),
+                message: formData.get('message'),
+                to_name: 'Rig Studio', // You can customize this
+                reply_to: formData.get('email')
+            };
             
-            // Simulate form submission with better UX
-            const button = this.querySelector('.cta-button');
-            const originalText = button.textContent;
+            // Show loading state
             button.textContent = 'Sending...';
             button.style.opacity = '0.7';
             button.disabled = true;
             
-            setTimeout(() => {
+            try {
+                // Send email via EmailJS
+                const response = await emailjs.send(
+                    EMAILJS_CONFIG.serviceID,
+                    EMAILJS_CONFIG.templateID,
+                    templateParams
+                );
+                
+                console.log('Email sent successfully:', response);
+                
+                // Show success state
                 button.textContent = 'Message Sent!';
                 button.style.background = 'linear-gradient(135deg, #00ff88 0%, #00cc66 100%)';
                 button.style.boxShadow = '0 0 20px rgba(0, 255, 136, 0.4)';
                 
+                // Reset form
                 setTimeout(() => {
                     button.textContent = originalText;
                     button.style.background = '';
@@ -1109,10 +1142,27 @@
                     button.disabled = false;
                     this.reset();
                 }, 3000);
-            }, 2000);
-            
-            // Log form data (in production, this would send to your backend)
-            console.log('Contact form submitted:', data);
+                
+            } catch (error) {
+                console.error('Email sending failed:', error);
+                
+                // Show error state
+                button.textContent = 'Failed to Send';
+                button.style.background = 'linear-gradient(135deg, #ff4444 0%, #cc0000 100%)';
+                button.style.boxShadow = '0 0 20px rgba(255, 68, 68, 0.4)';
+                
+                // Reset button after delay
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.background = '';
+                    button.style.boxShadow = '';
+                    button.style.opacity = '';
+                    button.disabled = false;
+                }, 3000);
+                
+                // You might want to show a user-friendly error message
+                alert('Sorry, there was an error sending your message. Please try again or contact us directly via email.');
+            }
         });
 
         // Enhanced header behavior on scroll
