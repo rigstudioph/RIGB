@@ -707,50 +707,28 @@
         </div>
     </section>
 
-   <section class="game-description">
-    <h2>
-        Piece of Mind 
-        <span class="coming-soon">Coming Soon</span>
-    </h2>
-    <p><em>The world is broken.</em></p>
-    <p>
-        Once a realm of harmony between man, machine, and spirit, it has been shattered by greed,
-        war, and an ancient betrayal. Now, its lands sprawl endlessly before you—untamed forests,
-        rusting industrial ruins, scorching deserts, and cities swallowed by the wild.
-    </p>
-    <p>
-        In <strong>Piece of Mind</strong>, you step into the role of a lone wanderer, caught between
-        the ambitions of ruthless humans, the cold precision of machines, and the unfathomable will
-        of spirits. Every step you take is a choice—fight for survival, uncover hidden truths, or
-        shape the fate of a dying world.
-    </p>
-    <p>
-        Master fluid hack-and-slash combat, forage for scarce resources, and craft gear from what
-        the land begrudgingly offers. Hunt for food, track enemies through storms, and adapt your
-        fighting style to enemies that learn and evolve.
-    </p>
-    <p>
-        But beware—here, the environment is as much your enemy as your foes. Hunger, fatigue, and
-        the elements will test your resolve. Every encounter is a gamble, every alliance a risk,
-        and every victory comes with a cost.
-    </p>
-    <p><strong>This is not just a fight for your life.<br>It’s a fight for your <em>piece of mind</em>.</strong></p>
-</section>
-
-<style>
-    .coming-soon {
-        font-size: 0.7em;
-        background: #ff4d4d;
-        color: white;
-        padding: 4px 8px;
-        margin-left: 10px;
-        border-radius: 4px;
-        font-weight: bold;
-        vertical-align: middle;
-        text-transform: uppercase;
-    }
-</style>
-
+    <!-- Projects Section -->
+    <section id="projects">
+        <h2 class="section-title">Our <span class="highlight">Projects</span></h2>
+        <div class="projects-grid">
+            <div class="project-card">
+                <div class="project-header">
+                    <div class="project-icon">🎮</div>
+                    <h3>Piece of Mind</h3>
+                </div>
+                <p>An immersive psychological thriller that challenges players to navigate the complexities of the human psyche. Experience a narrative-driven adventure where every choice shapes the story and reality itself becomes questionable.</p>
+                <span class="project-status">Coming Soon 2025</span>
+            </div>
+            <div class="project-card">
+                <div class="project-header">
+                    <div class="project-icon">⚡</div>
+                    <h3>SpriteForce</h3>
+                </div>
+                <p>A comprehensive suite of tools designed for sprite manipulation and game development. Streamline your workflow with powerful features for sprite editing, animation, optimization, and seamless integration into your development pipeline.</p>
+                <span class="project-status available">In Development</span>
+            </div>
+        </div>
+    </section>
 
     <!-- About Section -->
     <section id="about">
@@ -1066,7 +1044,7 @@
         initMobileMenu();
 
         // Add CSS for mobile menu animation
-        const mobileMenuStyles = `
+        const mobileMenuStyles = 
             @media (max-width: 768px) {
                 .mobile-toggle {
                     display: block !important;
@@ -1101,7 +1079,7 @@
                     padding: 1rem;
                 }
             }
-        `;
+        ;
         
         const styleSheet = document.createElement('style');
         styleSheet.textContent = mobileMenuStyles;
@@ -1128,7 +1106,7 @@
         function addCustomCursor() {
             const cursor = document.createElement('div');
             cursor.className = 'custom-cursor';
-            cursor.style.cssText = `
+            cursor.style.cssText = 
                 position: fixed;
                 width: 20px;
                 height: 20px;
@@ -1139,7 +1117,7 @@
                 opacity: 0;
                 transition: opacity 0.2s ease;
                 mix-blend-mode: difference;
-            `;
+            ;
             
             document.body.appendChild(cursor);
             
